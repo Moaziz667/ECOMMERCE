@@ -1,24 +1,17 @@
 # 🛍️ Sportify - Vue E-commerce Frontend
 
-This is the frontend for the Sportify E-commerce project built with Vue 3 and TailwindCSS.
+This is the frontend for the **Sportify** E-commerce project built with **Vue 3**, **TailwindCSS**, and **Poppins** font.
 
-## 📦 Project Setup
+---
 
-1. **Clone the repository**
+## 🚀 Getting Started
+
+### 📦 Clone the Repository and Install Dependencies
 
 ```bash
 git clone https://github.com/Moaziz667/ECOMMERCE.git
 cd ECOMMERCE/FrontEnd
-Install dependencies
-
-bash
-Copier
-Modifier
 npm install
-Run the development server
-
-bash
-Copier
-Modifier
+🏃 Run the Development Server
 npm run dev
-The app will be running at: http://localhost:5173
+
