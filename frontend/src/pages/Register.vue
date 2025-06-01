@@ -78,29 +78,42 @@ const form = reactive({
   phone: null,
   email: '',
   password: '',
-  role: '',
-  panier_id: null,
+  role: 'user',       // Default role
+  panier_id: null,    // Optional
 })
 
-function onSubmit() {
-  // Simple form validation (could be expanded)
-  if (!form.username || !form.last_name || !form.phone || !form.email || !form.password || !form.role) {
+async function onSubmit() {
+  // Simple validation
+  if (!form.username || !form.last_name || !form.phone || !form.email || !form.password) {
     alert('Please fill in all required fields.')
     return
   }
 
-  // Prepare data for API (example)
-  const payload = { ...form }
+  try {
+    const response = await fetch('http://localhost/sportify2/signup.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(form),
+    })
 
-  // Simulate API submission
-  alert('Registration data submitted:\n' + JSON.stringify(payload, null, 2))
+    const result = await response.json()
 
-  // Reset form after submit
-  Object.keys(form).forEach(key => {
-    form[key] = key === 'panier_id' || key === 'phone' ? null : ''
-  })
+    if (response.ok) {
+      alert('✅ Registration successful!')
+      // Clear the form
+      Object.keys(form).forEach(key => {
+        form[key] = key === 'panier_id' || key === 'phone' ? null : (key === 'role' ? 'user' : '')
+      })
+    } else {
+      alert('❌ Registration failed: ' + result.message)
+    }
+  } catch (error) {
+console.log(error)  }
 }
 </script>
+
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
