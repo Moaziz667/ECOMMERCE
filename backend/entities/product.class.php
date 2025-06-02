@@ -40,7 +40,7 @@ class Product
 
     public static function getAll()
     {
-        require_once('config.php');
+        require_once('..\config.php');
         $cnx = new connexion();
         $pdo = $cnx->CNXbase();
 
