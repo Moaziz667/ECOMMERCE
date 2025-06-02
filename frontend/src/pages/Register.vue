@@ -90,7 +90,7 @@ async function onSubmit() {
   }
 
   try {
-    const response = await fetch('http://localhost/sportify2/signup.php', {
+    const response = await fetch('http://localhost/Sporify2/backend/signup.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
