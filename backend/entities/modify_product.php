@@ -2,6 +2,26 @@
 session_start();
 require_once "product.class.php";
 
+// === CORS Headers ===
+$allowed_origins = ['http://localhost:5174'];
+
+if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed_origins)) {
+    header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
+} else {
+    header("Access-Control-Allow-Origin: http://localhost:5174");
+}
+
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Methods: PUT, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json");
+
+// === Handle preflight OPTIONS ===
+if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
+    http_response_code(200);
+    exit();
+}
+
 // Only allow PUT requests
 if ($_SERVER['REQUEST_METHOD'] !== 'PUT') {
     http_response_code(405); // Method Not Allowed
