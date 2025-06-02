@@ -27,7 +27,7 @@
                 {
                     $_SESSION["connecte"]="1";
                     $_SESSION["user"]=$res["user"];
-                    
+                    $_SESSION["role"]=$res["role"];
                     if($res["role"]=='user'){
                         // add header here !
                         header("location:user_login_succes.php");
