@@ -1,58 +1,179 @@
 <template>
-  <form @submit.prevent="addProduct" class="max-w-md mx-auto p-4 bg-white shadow rounded">
-    <input v-model="form.libelle" placeholder="Libelle" required class="input" />
-    <input v-model="form.description" placeholder="Description" required class="input" />
-    <input v-model.number="form.prix" type="number" placeholder="Prix" required class="input" />
-    <input v-model.number="form.quantity" type="number" placeholder="Quantity" required class="input" />
-    <input v-model="form.category" placeholder="Category" required class="input" />
-    <input v-model="form.image_url" placeholder="Image URL" class="input" />
+  <Navbar />
 
-    <button type="submit" class="btn btn-green mt-4">Add Product</button>
-  </form>
+  <div class="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg border border-green-300">
+    <!-- Add Product Form -->
+    <h2 class="text-2xl font-bold text-green-700 mb-6 text-center">Add New Product</h2>
+
+    <form @submit.prevent="submitProduct">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-green-800 font-medium mb-1">Libelle</label>
+          <input
+            v-model="product.libelle"
+            type="text"
+            class="w-full border border-green-400 p-2 rounded focus:ring-2 focus:ring-green-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label class="block text-green-800 font-medium mb-1">Description</label>
+          <input
+            v-model="product.description"
+            type="text"
+            class="w-full border border-green-400 p-2 rounded focus:ring-2 focus:ring-green-500"
+          />
+        </div>
+
+        <div>
+          <label class="block text-green-800 font-medium mb-1">Prix</label>
+          <input
+            v-model.number="product.prix"
+            type="number"
+            class="w-full border border-green-400 p-2 rounded focus:ring-2 focus:ring-green-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label class="block text-green-800 font-medium mb-1">Quantity</label>
+          <input
+            v-model.number="product.quantity"
+            type="number"
+            class="w-full border border-green-400 p-2 rounded focus:ring-2 focus:ring-green-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label class="block text-green-800 font-medium mb-1">Category</label>
+          <input
+            v-model="product.category"
+            type="text"
+            class="w-full border border-green-400 p-2 rounded focus:ring-2 focus:ring-green-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label class="block text-green-800 font-medium mb-1">Image URL</label>
+          <input
+            v-model="product.image_url"
+            type="text"
+            class="w-full border border-green-400 p-2 rounded focus:ring-2 focus:ring-green-500"
+          />
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded transition duration-300"
+      >
+        Add Product
+      </button>
+
+      <p v-if="message" class="mt-4 text-green-700 font-medium text-center">{{ message }}</p>
+      <p v-if="error" class="mt-4 text-red-600 font-medium text-center">{{ error }}</p>
+    </form>
+  </div>
+
+  <!-- Product List -->
+  <div class="max-w-6xl mx-auto mt-10 px-6">
+    <h2 class="text-xl font-bold text-green-700 mb-4">Product List</h2>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div
+        v-for="p in products"
+        :key="p.product_id"
+        class="bg-white border border-green-300 rounded-lg shadow p-4 flex flex-col justify-between"
+      >
+        <img
+          :src="p.image_url"
+          alt="Product Image"
+          class="h-40 w-full object-cover rounded mb-3"
+        />
+        <h3 class="text-lg font-semibold text-green-800">{{ p.libelle }}</h3>
+        <p class="text-gray-600 text-sm mb-1">{{ p.description }}</p>
+        <p class="text-green-600 font-bold">€{{ p.prix }}</p>
+        <p class="text-sm text-gray-500">Qty: {{ p.quantity }} | Cat: {{ p.category }}</p>
+      </div>
+    </div>
+  </div>
 </template>
-<script setup>
-import { ref } from 'vue'
 
-const form = ref({
+<script setup>
+import { ref, onMounted } from 'vue'
+import Navbar from '../components/Navbar.vue'
+
+const product = ref({
   libelle: '',
   description: '',
-  prix: 0,
+  prix: 0.0,
   quantity: 0,
   category: '',
   image_url: ''
 })
 
-const API_URL = 'http://localhost/Sporify2/backend/product.php'
+const message = ref('')
+const error = ref('')
+const products = ref([])
 
-async function addProduct() {
+const fetchProducts = async () => {
   try {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include', // if your PHP session uses cookies
-      body: JSON.stringify(form.value),
+    const res = await fetch('http://localhost/Sporify2/backend/entities/list_product.php', {
+      credentials: 'include'
     })
-
     const data = await res.json()
     if (data.success) {
-      alert('Product added successfully!')
-      // Clear form
-      form.value = {
+      products.value = data.data
+      console.log('Products loaded:', products.value)
+    } else {
+      error.value = 'Failed to load products.'
+    }
+  } catch (err) {
+    error.value = 'Network error: ' + err.message
+  }
+}
+
+const submitProduct = async () => {
+  message.value = ''
+  error.value = ''
+
+  // Basic validation for image_url
+  
+
+  try {
+    const response = await fetch('http://localhost/Sporify2/backend/entities/add_product.php', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(product.value)
+    })
+
+    const result = await response.json()
+
+    if (result.success) {
+      message.value = result.message || 'Product added successfully!'
+      product.value = {
         libelle: '',
         description: '',
-        prix: 0,
+        prix: 0.0,
         quantity: 0,
         category: '',
         image_url: ''
       }
-      // Optionally fetch products again or update UI
+      fetchProducts() // Refresh product list
     } else {
-      alert('Failed to add product: ' + data.message)
+      error.value = result.message || 'Something went wrong!'
     }
-  } catch (error) {
-    alert('Error: ' + error.message)
+  } catch (err) {
+    error.value = 'Network error: ' + err.message
   }
 }
+
+onMounted(() => {
+  fetchProducts()
+})
 </script>
