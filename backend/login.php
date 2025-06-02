@@ -1,49 +1,60 @@
 <?php
-    session_start();
+session_start();
+header("Content-Type: application/json");
+header("Access-Control-Allow-Origin: *");  // Adjust origin if needed
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Headers: Content-Type");
 
-    require_once "user.class.php";
-    require_once "entities\user.class.php";
-    $us=new user();
-    if (isset($_POST['login'])){
-        $us->email =$_POST["login"];
-        $us->pwd =$_POST["pwd"];
-        try{
-            $res = $us->getUser();         
-            $data = $res->fetchAll(PDO::FETCH_ASSOC);            
-            if ($data){
-                $_SESSION["connecte"]="1";
-                $_SESSION["user"]=$data[0]["user"];
-                // add header here !
-                //header("location:liste_etudiant.php");
-                exit();
-            }
-            else
-                echo "aucun utilisateur";
-        try{
-            $res = $us->recherche_user();         
-            if ($res){
-                $hashedPasswordFromDB = $res['password'];
-                if(password_verify($us->pwd, $hashedPasswordFromDB))
-                {
-                    $_SESSION["connecte"]="1";
-                    $_SESSION["user"]=$res["user"];
-                    $_SESSION["role"]=$res["role"];
-                    if($res["role"]=='user'){
-                        // add header here !
-                        header("location:user_login_succes.php");
-                    }
-                    else
-                        header("location:admin_login_succes.php");
-                    
-                    exit();
-            }
-            }
-            else
-                echo "aucun utilisateur";
-                // add login page header !!!
-            }
-        catch (PDOException $e){
-            echo "ERREUR : ".$e->getMessage(). " LIGNE : ".$e->getLine();
+require_once "user.class.php";
+
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    http_response_code(405);
+    echo json_encode(["status" => "error", "message" => "Method Not Allowed"]);
+    exit();
+}
+
+$input = json_decode(file_get_contents("php://input"), true);
+
+if (!$input || !isset($input['login']) || !isset($input['pwd'])) {
+    http_response_code(400);
+    echo json_encode(["status" => "error", "message" => "Invalid input"]);
+    exit();
+}
+
+$us = new User();
+$us->email = $input["login"];
+$us->pwd = $input["pwd"];
+
+try {
+    $res = $us->recherche_user();
+
+    if ($res) {
+        $hashedPasswordFromDB = $res['password'];
+        
+        if (password_verify($us->pwd, $hashedPasswordFromDB)) {
+            $_SESSION["connecte"] = "1";
+            $_SESSION["user"] = $res["username"];
+            $_SESSION["role"] = $res["role"];
+
+            http_response_code(200);
+            echo json_encode([
+                "status" => "success",
+                "message" => "Login successful",
+                "session" => [
+                    "username" => $res["username"],
+                    "role" => $res["role"]
+                ]
+            ]);
+        } else {
+            http_response_code(401); // Unauthorized
+            echo json_encode(["status" => "error", "message" => "Incorrect password , $us->pwd -- $hashedPasswordFromDB"]);
         }
-    }}
+    } else {
+        http_response_code(404); // Not found
+        echo json_encode(["status" => "error", "message" => "User not found"]);
+    }
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode(["status" => "error", "message" => "Database error", "details" => $e->getMessage()]);
+}
 ?>
