@@ -1,6 +1,6 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Origin: http://localhost:5174");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 require_once('entities\user.class.php');
@@ -28,9 +28,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $us->role = $data["role"] ?? "user";
     //hachage du mdp
     $us->pwd = password_hash($us->pwd, PASSWORD_DEFAULT);
+
+
     if ($us->recherche_user() == null) {
         $cnx = new connexion();
         $pdo = $cnx->CNXbase();
+        
+        
         try {
             $stmt = $pdo->prepare("INSERT INTO user (username, last_name, phone, email, password, role)
             VALUES (:username, :last_name, :phone, :email, :password, :role)");
