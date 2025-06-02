@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "product.class.php";
+require_once "entities/product.class.php";
 
 // Check if the user is an admin (assuming session-based auth)
 if (!isset($_SESSION['login']) || $_SESSION['role'] !== 'admin') {
@@ -10,16 +10,10 @@ if (!isset($_SESSION['login']) || $_SESSION['role'] !== 'admin') {
 
 // Read JSON body
 $data = json_decode(file_get_contents('php://input'), true);
-
 if (!$data) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Invalid JSON zzzz',
-        'raw_input' => file_get_contents('php://input') // helps debug
-    ]);
+    echo json_encode(['success' => false, 'message' => 'Invalid JSON']);
     exit;
 }
-
 
 // Create and save product
 $product = new Product();
