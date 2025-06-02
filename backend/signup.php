@@ -28,13 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $us->role = $data["role"] ?? "user";
     //hachage du mdp
     $us->pwd = password_hash($us->pwd, PASSWORD_DEFAULT);
-
-
     if ($us->recherche_user() == null) {
         $cnx = new connexion();
         $pdo = $cnx->CNXbase();
-        
-        
         try {
             $stmt = $pdo->prepare("INSERT INTO user (username, last_name, phone, email, password, role)
             VALUES (:username, :last_name, :phone, :email, :password, :role)");
