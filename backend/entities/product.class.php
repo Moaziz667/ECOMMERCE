@@ -58,4 +58,14 @@ class Product
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    public static function deleteById($id)
+{
+    require_once('..\config.php');
+    $cnx = new connexion();
+    $pdo = $cnx->CNXbase();
+
+    $stmt = $pdo->prepare("DELETE FROM product WHERE product_id = :id");
+    return $stmt->execute([':id' => $id]);
+}
+
 }  
