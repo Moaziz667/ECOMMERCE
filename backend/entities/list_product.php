@@ -1,25 +1,27 @@
 <?php
 session_start();
-require_once "entities/product.class.php";
+require_once "product.class.php";
+header("Content-Type: application/json");
 
-// Check if the user is an admin (assuming session-based auth)
+// Check if user is logged in and is admin
 if (!isset($_SESSION['login']) || $_SESSION['role'] !== 'admin') {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
-// Read JSON body
-$data = json_decode(file_get_contents('php://input'), true);
-if (!$data) {
-    echo json_encode(['success' => false, 'message' => 'Invalid JSON']);
-    exit;
-}
+try {
+    // Call a static method or instantiate then call method to get products
+    $products = Product::getAll(); // You need to implement this method
 
-// Create and save product
-$product = new Product();
-$product->create_product($data);
-if ($product->save()) {
-    echo json_encode(['success' => true, 'message' => 'Product added successfully']);
-} else {
-    echo json_encode(['success' => false, 'message' => 'Failed to add product']);
+    echo json_encode([
+        'success' => true,
+        'data' => $products
+    ]);
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error fetching products',
+        'error' => $e->getMessage()
+    ]);
 }
