@@ -22,7 +22,7 @@ class Product
 
     public function save()
     {
-        require_once('config.php');
+        require_once('..\config.php');
         $cnx = new connexion();
         $pdo = $cnx->CNXbase();
 

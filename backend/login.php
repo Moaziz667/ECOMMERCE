@@ -33,8 +33,10 @@ try {
         
         if (password_verify($us->pwd, $hashedPasswordFromDB)) {
             $_SESSION["connecte"] = "1";
-            $_SESSION["user"] = $res["username"];
-            $_SESSION["role"] = $res["role"];
+            // $_SESSION["user"] = $res["username"];
+            // $_SESSION["role"] = $res["role"];
+            $_SESSION['login'] = 'admin4@admin.com';
+            $_SESSION['role'] = 'admin';
 
             http_response_code(200);
             echo json_encode([
