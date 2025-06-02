@@ -58,4 +58,4 @@ class Product
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-}  
+}
