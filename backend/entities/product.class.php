@@ -50,7 +50,7 @@ class Product
 
     public static function findById($id)
     {
-        require_once('config.php');
+        require_once('..\config.php');
         $cnx = new connexion();
         $pdo = $cnx->CNXbase();
 
@@ -58,4 +58,32 @@ class Product
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    public static function deleteById($id)
+{
+    require_once('..\config.php');
+    $cnx = new connexion();
+    $pdo = $cnx->CNXbase();
+
+    $stmt = $pdo->prepare("DELETE FROM product WHERE product_id = :id");
+    return $stmt->execute([':id' => $id]);
+}
+public function update()
+{
+    require_once('..\config.php');
+    $cnx = new connexion();
+    $pdo = $cnx->CNXbase();
+
+    $stmt = $pdo->prepare("UPDATE product SET libelle = :libelle, description = :description, prix = :prix, quantity = :quantity, category = :category, image_url = :image_url WHERE product_id = :id");
+
+    return $stmt->execute([
+        ':libelle' => $this->libelle,
+        ':description' => $this->description,
+        ':prix' => $this->prix,
+        ':quantity' => $this->quantity,
+        ':category' => $this->category,
+        ':image_url' => $this->image_url,
+        ':id' => $this->product_id
+    ]);
+}
+
 }  
