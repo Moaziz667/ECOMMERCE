@@ -66,6 +66,7 @@ const store = useStore()
 
 const cartItems = computed(() => store.getters.cartItems)
 const cartTotal = computed(() => store.getters.cartTotal)
+const userId = computed(() => store.state.userId) // Make sure userId is stored in Vuex state with the exact same name
 
 function updateItem(productId, quantity) {
   if (quantity < 1) return
@@ -78,7 +79,7 @@ function removeItem(productId) {
 
 async function checkout() {
   const payload = {
-    user_id: 1, // Replace this with the actual logged-in user's ID
+    user_id: userId.value, // Use .value here to get the actual userId
     products: cartItems.value.map(item => ({
       product_id: item.product_id,
       quantity: item.quantity,

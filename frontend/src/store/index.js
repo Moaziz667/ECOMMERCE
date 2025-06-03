@@ -35,6 +35,12 @@ const store = createStore({
         ? localStorage.setItem('username', username)
         : localStorage.removeItem('username')
     },
+    setUserid(state, userId) {
+      state.userId = userId
+      userId
+        ? localStorage.setItem('userId', userId)
+        : localStorage.removeItem('userId')
+    },
     logout(state) {
       state.isLoggedIn = false
       state.userRole = null

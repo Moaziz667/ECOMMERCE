@@ -59,10 +59,11 @@ try {
 
         if (password_verify($us->pwd, $hashedPasswordFromDB)) {
             $_SESSION["connecte"] = "1";
-            // $_SESSION["user"] = $res["username"];
+            // $_SESSION["user"] = ;
             // $_SESSION["role"] = $res["role"];
-            $_SESSION['login'] = 'admin4@admin.com';
-            $_SESSION['role'] = 'admin';
+            $_SESSION['login'] = $res["username"];
+            $_SESSION['role'] = $res["role"];
+            $_SESSION['user_id'] = $res["user_id"]; // Store user ID in session
 
             http_response_code(200);
             echo json_encode([
@@ -70,7 +71,8 @@ try {
                 "message" => "Login successful",
                 "session" => [
                     "username" => $res["username"],
-                    "role" => $res["role"]
+                    "role" => $res["role"],
+                    "user_id" => $res["user_id"]
                 ]
             ]);
         } else {
