@@ -23,13 +23,23 @@
             </span>
           </div>
 
-          <span class="ml-4">Hello, {{ username }}</span>
-          <button
-            @click="logout"
-            class="ml-4 bg-green-700 hover:bg-green-800 text-white px-3 py-1 rounded transition-colors duration-200"
-          >
-            Logout
-          </button>
+          <!-- 👤 User Info and Profile Button -->
+          <div class="flex items-center space-x-4 ml-6">
+            <span class="font-semibold text-white">Hello, {{ displayName }}</span>
+            <button
+              @click="goToProfile"
+              class="bg-white text-green-600 font-semibold px-3 py-1 rounded hover:bg-gray-100 transition"
+              title="Account Info"
+            >
+              Profile
+            </button>
+            <button
+              @click="logout"
+              class="bg-green-700 hover:bg-green-800 text-white px-3 py-1 rounded transition"
+            >
+              Logout
+            </button>
+          </div>
         </template>
       </div>
     </div>
@@ -45,8 +55,12 @@ const store = useStore()
 const router = useRouter()
 
 const isLoggedIn = computed(() => store.state.isLoggedIn)
-const username = computed(() => store.state.username || store.state.userEmail || 'User')
-const cartCount = computed(() => store.getters.cartItemCount)
+const username = computed(() => store.state.username)
+const userEmail = computed(() => store.state.userEmail)
+
+const displayName = computed(() => {
+  return username.value?.trim() ? username.value : userEmail.value || 'User'
+})
 
 function logout() {
   store.commit('logout')
@@ -55,5 +69,9 @@ function logout() {
 
 function goToCart() {
   router.push('/panier')
+}
+
+function goToProfile() {
+  router.push('/profile')
 }
 </script>
