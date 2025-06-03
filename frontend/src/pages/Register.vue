@@ -71,6 +71,7 @@
 <script setup>
 import Navbar from '../components/Navbar.vue'
 import { reactive } from 'vue'
+import Swal from 'sweetalert2'
 
 const form = reactive({
   username: '',
@@ -85,7 +86,11 @@ const form = reactive({
 async function onSubmit() {
   // Simple validation
   if (!form.username || !form.last_name || !form.phone || !form.email || !form.password) {
-    alert('Please fill in all required fields.')
+    Swal.fire({
+      icon: 'warning',
+      title: 'Incomplete Form',
+      text: 'Please fill in all required fields.',
+    })
     return
   }
 
@@ -101,18 +106,35 @@ async function onSubmit() {
     const result = await response.json()
 
     if (response.ok) {
-      alert('✅ Registration successful!')
+      Swal.fire({
+        icon: 'success',
+        title: 'Registration Successful',
+        text: 'Your account has been created!',
+        timer: 2000,
+        showConfirmButton: false
+      })
+
       // Clear the form
       Object.keys(form).forEach(key => {
         form[key] = key === 'panier_id' || key === 'phone' ? null : (key === 'role' ? 'user' : '')
       })
     } else {
-      alert('❌ Registration failed: ' + result.message)
+      Swal.fire({
+        icon: 'error',
+        title: 'Registration Failed',
+        text: result.message || 'An error occurred during registration.',
+      })
     }
   } catch (error) {
-console.log(error)  }
+    Swal.fire({
+      icon: 'error',
+      title: 'Server Error',
+      text: error.message,
+    })
+  }
 }
 </script>
+
 
 
 <style>

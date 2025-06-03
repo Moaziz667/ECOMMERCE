@@ -29,8 +29,8 @@ if ($_SERVER["REQUEST_METHOD"] !== "GET") {
     exit();
 }
 
-// === Check if user is admin ===
-if (!isset($_SESSION['login']) || $_SESSION['role'] !== 'admin') {
+// ===  ===
+if (!isset($_SESSION['login']) ) {
     http_response_code(403); // Forbidden
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit();
