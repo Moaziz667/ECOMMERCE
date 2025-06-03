@@ -3,8 +3,26 @@ session_start();
 require_once "../config.php";
 require_once "user.class.php";
 
-header('Content-Type: application/json');
+// === CORS Headers ===
+$allowed_origins = ['http://localhost:5174'];
 
+if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed_origins)) {
+    header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
+} else {
+    header("Access-Control-Allow-Origin: http://localhost:5174");
+}
+
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json");
+
+if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
+    http_response_code(200);
+    exit();
+}
+
+// === Original Logic ===
 // Database connection
 $cnx = new connexion();
 $conn = $cnx->CNXbase();
@@ -16,7 +34,7 @@ if (!isset($_SESSION['login'])) {
 }
 
 // Option 1: Get user ID from session
-$userId = $_SESSION['user_id'] ?? 2; // fallback to 2 for testing
+$userId = $_SESSION['user_id']; // fallback to 2 for testing
 
 // Option 2: Or use GET param ?id=2
 // $userId = isset($_GET['id']) ? intval($_GET['id']) : null;

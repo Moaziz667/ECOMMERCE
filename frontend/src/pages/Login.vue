@@ -113,6 +113,7 @@ async function onSubmit() {
       store.commit('setUserRole', userRole)
       store.commit('setLoggedIn', true)
       store.commit('setUserEmail', email.value)
+      store.commit('setUserid', data.session.user_id || null)
 
       if (userRole === 'admin') {
         router.push('/admin')
