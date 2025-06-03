@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once "config.php";      
-require_once "user.class.php";  
+require_once "entities/user.class.php";  
 
 header('Content-Type: application/json');
 $cnx = new connexion();
