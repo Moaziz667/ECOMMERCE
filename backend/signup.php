@@ -3,13 +3,20 @@ header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Origin: http://localhost:5174");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
-require_once('entities\user.class.php');
+
+require_once('entities/user.class.php');
 require_once('config.php');
+
+// === Preflight ===
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
-$us = new user();
+
+// === Connexion à la base ===
+$cnx = new connexion();
+$pdo = $cnx->CNXbase();
+$us = new User($pdo); // <- Fix ici : on passe la connexion au constructeur
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents("php://input"), true);
@@ -20,24 +27,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
+    // Hydratation de l'objet
     $us->email = $data["email"] ?? "";
     $us->pwd = $data["password"] ?? "";
     $us->username = $data["username"] ?? "";
     $us->last_name = $data["last_name"] ?? "";
     $us->phone = $data["phone"] ?? "";
     $us->role = $data["role"] ?? "user";
-    //hachage du mdp
     $us->pwd = password_hash($us->pwd, PASSWORD_DEFAULT);
 
-
+    // Vérifie si l'utilisateur existe
     if ($us->recherche_user() == null) {
-        $cnx = new connexion();
-        $pdo = $cnx->CNXbase();
-        
-        
         try {
             $stmt = $pdo->prepare("INSERT INTO user (username, last_name, phone, email, password, role)
-            VALUES (:username, :last_name, :phone, :email, :password, :role)");
+                                   VALUES (:username, :last_name, :phone, :email, :password, :role)");
             $stmt->execute([
                 ':username' => $us->username,
                 ':last_name' => $us->last_name,
