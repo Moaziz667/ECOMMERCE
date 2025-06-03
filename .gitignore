@@ -1,0 +1,22 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.suo
+*.user
+*.swp
+
+# PHP
+/vendor/
+/logs/
+/config.php
+
+# Node / Vue
+/node_modules/
+/dist/
+/.env
+.env.local
+.env.*.local
