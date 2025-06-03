@@ -3,12 +3,12 @@
     <div class="container mx-auto flex justify-between items-center px-6">
       <!-- Logo image replacing the text -->
       <div class="flex items-center">
-        <img
+       <a href="/"> <img
           src="../assets/l.png"
           alt="Sportify Logo"
           class="h-20 w-30"
           style="background-color: transparent; mix-blend-mode: multiply;"
-        />
+        /></a>
       </div>
 
       <div class="space-x-8 text-lg font-medium flex items-center">
