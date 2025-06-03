@@ -1,5 +1,5 @@
 <template>
-    <Navbar />
+  <Navbar />
   <div class="max-w-6xl mx-auto px-4 py-10" style="font-family: 'Poppins', sans-serif;">
     <h2 class="text-3xl font-semibold mb-6">Your Cart</h2>
 
@@ -44,6 +44,15 @@
       <div class="text-right text-xl font-semibold mt-6">
         Total: ${{ cartTotal.toFixed(2) }}
       </div>
+
+      <div class="text-right mt-4">
+        <button
+          class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+          @click="checkout"
+        >
+          Checkout
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -65,5 +74,35 @@ function updateItem(productId, quantity) {
 
 function removeItem(productId) {
   store.commit('removeFromCart', productId)
+}
+
+async function checkout() {
+  const payload = {
+    user_id: 1, // Replace this with the actual logged-in user's ID
+    products: cartItems.value.map(item => ({
+      product_id: item.product_id,
+      quantity: item.quantity,
+    })),
+  }
+
+  try {
+    const response = await fetch('http://localhost/Sporify2/backend/command.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+
+    const data = await response.json()
+
+    if (data.success) {
+      alert(`Order placed! Commande ID: ${data.commande_id}`)
+      store.commit('clearCart') // Clears cart after successful order
+    } else {
+      alert(`Error: ${data.message}`)
+    }
+  } catch (error) {
+    console.error('Checkout failed:', error)
+    alert('An error occurred during checkout.')
+  }
 }
 </script>
