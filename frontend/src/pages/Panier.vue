@@ -61,12 +61,13 @@
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 import Navbar from '../components/Navbar.vue'
+import Swal from 'sweetalert2'
 
 const store = useStore()
 
 const cartItems = computed(() => store.getters.cartItems)
 const cartTotal = computed(() => store.getters.cartTotal)
-const userId = computed(() => store.state.userId) // Make sure userId is stored in Vuex state with the exact same name
+const userId = computed(() => store.state.userId) // Ensure userId exists in Vuex state
 
 function updateItem(productId, quantity) {
   if (quantity < 1) return
@@ -79,7 +80,7 @@ function removeItem(productId) {
 
 async function checkout() {
   const payload = {
-    user_id: userId.value, // Use .value here to get the actual userId
+    user_id: userId.value,
     products: cartItems.value.map(item => ({
       product_id: item.product_id,
       quantity: item.quantity,
@@ -96,14 +97,28 @@ async function checkout() {
     const data = await response.json()
 
     if (data.success) {
-      alert(`Order placed! Commande ID: ${data.commande_id}`)
-      store.commit('clearCart') // Clears cart after successful order
+      await Swal.fire({
+        icon: 'success',
+        title: 'Order placed!',
+        text: `Commande ID: ${data.commande_id}`,
+        timer: 3000,
+        showConfirmButton: false,
+      })
+      store.commit('clearCart')
     } else {
-      alert(`Error: ${data.message}`)
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: data.message,
+      })
     }
   } catch (error) {
     console.error('Checkout failed:', error)
-    alert('An error occurred during checkout.')
+    await Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'An error occurred during checkout.',
+    })
   }
 }
 </script>
