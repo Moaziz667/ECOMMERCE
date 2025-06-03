@@ -10,7 +10,8 @@ import Admin from './pages/Admin.vue'
 import store from './store'  // your Vuex store
 import User from './pages/User.vue'
 import Panier from './pages/Panier.vue'
-import Profile from './pages/Profile.vue'
+import Profile from './pages/Profile.vue' 
+import Order from './pages/Orders.vue'
 const routes = [
   { path: '/', component: Home },
   { path: '/register', component: Register },
@@ -18,7 +19,8 @@ const routes = [
   { path: '/admin', component: Admin },
     {path:'/user',component:User},
     {path:'/panier',component:Panier},
-    {path:'/profile',component:Profile}
+    {path:'/profile',component:Profile},
+{path:'/orders',component:Order}
 ]
 
 const router = createRouter({
